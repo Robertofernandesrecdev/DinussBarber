@@ -28,8 +28,9 @@ export function Sidebar({ children }: { children: ReactNode }) {
     const { isOpen,  onOpen, onClose } = useDisclosure();
 
     return (
-        <Box minH="100vh" bg="colorscover.900" >
+        <Box color="white" minH="100vh" bg="colorscover.900" >
             <SidebarContent
+                color="white"
                 onClose={() => onClose}
                 display={{base:'none', md: 'block'}}
             />
@@ -38,13 +39,13 @@ export function Sidebar({ children }: { children: ReactNode }) {
                 onOverlayClick={onClose} size="full" onClose={onClose}
             >
                 <DrawerContent>
-                    <SidebarContent onClose={() => onClose()}/>
+                    <SidebarContent color="white" onClose={() => onClose()}/>
                 </DrawerContent>
             </Drawer>
 
             <MobileNav display={{ base: 'flex', md: 'none'}} onOpen={onOpen} />
 
-            <Box>
+            <Box ml={{ base: 0 , md: 60 }} p={4}>
                 {children}
             </Box>
         </Box>
@@ -126,7 +127,7 @@ const MobileNav = ({onOpen, ...rest}: MobileProps) => {
             {...rest}
         >
             <IconButton variant="outline" onClick={onOpen} aria-label="open menu"
-                icon={<FiMenu/>}
+                icon={<FiMenu />}
             />
 
             <Flex ml={8} flexDirection="row">
