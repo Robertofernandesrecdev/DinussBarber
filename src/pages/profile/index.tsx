@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react'
+import { useContext, useState } from 'react'
 import Head from "next/head";
 import { Flex, Text, Heading, Box, Input, Button } from '@chakra-ui/react'
 import { Sidebar } from "../../components/sidebar";
@@ -8,7 +8,7 @@ import { AuthContext } from '../../context/AuthContext'
 import { setupAPIClient } from '../../services/api'
 
 
-interface UserProps{
+interface UserProps {
     id: string;
     name: string;
     email: string;
@@ -16,12 +16,12 @@ interface UserProps{
 
 }
 
-interface ProfileProps{
+interface ProfileProps {
     user: UserProps;
     premium: boolean;
 }
 
-export default function Profile({ user, premium}: ProfileProps) {
+export default function Profile({ user, premium }: ProfileProps) {
     const { logoutUser } = useContext(AuthContext);
 
     const [name, setName] = useState(user && user?.name)
@@ -29,6 +29,25 @@ export default function Profile({ user, premium}: ProfileProps) {
 
     async function handleLogout() {
         await logoutUser();
+    }
+
+    async function handleUpdateUser() {
+
+        if (name === '') {
+            return;
+        }
+       try {
+           const apiClient = setupAPIClient();
+           await apiClient.put('/users',{
+               name: name,
+               endereco: endereco,                    
+           })
+
+           alert("Dados alterados com sucesso!");
+
+       } catch (err) {
+           console.log(err);
+       }
     }
 
 
@@ -55,7 +74,7 @@ export default function Profile({ user, premium}: ProfileProps) {
                                 type="text"
                                 mb={3}
                                 value={name}
-                                onChange={ (e) => setName(e.target.value) }
+                                onChange={(e) => setName(e.target.value)}
                             />
 
                             <Text mb={2} fontSize="xl" fontWeight="bold" color="white" >Endereço:</Text>
@@ -66,7 +85,7 @@ export default function Profile({ user, premium}: ProfileProps) {
                                 type="text"
                                 mb={3}
                                 value={endereco}
-                                onChange={ (e) => setEndereco(e.target.value) }
+                                onChange={(e) => setEndereco(e.target.value)}
                             />
 
                             <Text mb={2} fontSize="xl" fontWeight="bold" color="white" >Plano atual:</Text>
@@ -75,7 +94,7 @@ export default function Profile({ user, premium}: ProfileProps) {
                                 background="colorscover.900" alignItems="center"
                                 justifyContent="space-between" >
                                 <Text p={2} fontSize="lg" color={premium ? "#FBA931" : "#4dffb4"}
-                                >Pano {premium ? "Premium" : "Grátis"}</Text>
+                                >Plano {premium ? "Premium" : "Grátis"}</Text>
 
                                 <Link href="/planos">
                                     <Box cursor="pointer" p={1} pl={2}
@@ -86,8 +105,12 @@ export default function Profile({ user, premium}: ProfileProps) {
                                 </Link>
                             </Flex>
 
-                            <Button w="100%" mt={3} mb={4} bg="colorsbutton.cta"
-                            size ="lg" _hover={{bg:'#ffb13e'}} >Salvar</Button>
+                            <Button w="100%" mt={3} mb={4}
+                                bg="colorsbutton.cta"
+                                size="lg" _hover={{ bg: '#ffb13e' }}
+                                onClick={handleUpdateUser}
+                            >Salvar</Button>
+
                             <Button w="100%" mb={6}
                                 bg="transparent" borderWidth={2}
                                 borderColor="red.500" color="red.500"
@@ -122,7 +145,7 @@ export const getServerSideProps = canSSRAuth(async (ctx) => {
                 premium: response.data?.subscriptions?.status === 'active' ? true : false
             }
         }
-        
+
     } catch (err) {
         console.log(err);
 
